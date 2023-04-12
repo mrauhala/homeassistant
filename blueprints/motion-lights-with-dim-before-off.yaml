@@ -2,6 +2,7 @@ blueprint:
   name: Motion Light With Dimming
   description: Turn a light on based on detected motion, dim lights before turning off
   domain: automation
+  author: Mikko Rauhala
   input:
     motion_sensor:
       name: Motion Sensor
