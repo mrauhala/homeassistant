@@ -36,17 +36,22 @@ trigger:
     entity_id:
     - !input motion_sensor
     to: "on"
-    from: "off"
     id: "on"
+  - platform: state
+    entity_id:
+      - !input motion_sensor
+    to: "off"
+    from: "on"
+    id: clear
   - platform: event
     event_type: timer.finished
     event_data:
-      entity_id: timer.eteinen_ajastin_dim
+      entity_id: !input dim_timer
     id: dim
   - platform: event
     event_type: timer.finished
     event_data:
-      entity_id: timer.eteinen_ajastin_off
+      entity_id: !input off_timer
     id: "off"
     
 action:
@@ -59,9 +64,8 @@ action:
             data:
               brightness_pct: 100
             target: !input target_light
-          - service: timer.start
+          - service: timer.cancel
             data: {}
-            enabled: true
             target:
               entity_id: !input dim_timer
           - service: timer.cancel
