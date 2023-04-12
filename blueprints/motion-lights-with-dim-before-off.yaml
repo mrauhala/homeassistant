@@ -92,4 +92,15 @@ action:
             data:
               transition: 10
             target: !input target_light
-
+      - conditions:
+          - condition: trigger
+            id: clear
+        sequence:
+          - service: timer.start
+            data: {}
+            target:
+              entity_id: !input dim_timer
+          - service: timer.cancel
+            data: {}
+            target:
+              entity_id: !input off_timer
