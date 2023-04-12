@@ -10,6 +10,13 @@ blueprint:
         entity:
           domain: binary_sensor
           device_class: motion
+    target_light:
+      name: Lights
+      description: The lights to keep in sync.
+      selector:
+        target:
+          entity:
+            domain: light
   
 trigger:
   - platform: state
@@ -28,4 +35,44 @@ trigger:
     event_data:
       entity_id: timer.eteinen_ajastin_off
     id: "off"
+    
+action:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: "on"
+        sequence:
+          - service: light.turn_on
+            data:
+              brightness_pct: 100
+            target: !input target_light
+          - service: timer.start
+            data: {}
+            enabled: true
+            target:
+              entity_id: timer.eteinen_ajastin_dim
+          - service: timer.cancel
+            data: {}
+            target:
+              entity_id: timer.eteinen_ajastin_off
+      - conditions:
+          - condition: trigger
+            id: dim
+        sequence:
+          - service: light.turn_on
+            data:
+              brightness_pct: 50
+            target: !input target_light
+          - service: timer.start
+            data: {}
+            target:
+              entity_id: timer.eteinen_ajastin_off
+      - conditions:
+          - condition: trigger
+            id: "off"
+        sequence:
+          - service: light.turn_off
+            data:
+              transition: 10
+            target: !input target_light
 
