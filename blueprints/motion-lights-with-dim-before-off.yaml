@@ -22,16 +22,14 @@ blueprint:
       name: Off Timer
       description: Timer that counts for grace period 
       selector:
-        target:
-          entity:
-            domain: timer
+        entity:
+          domain: timer
     dim_timer:
       name: Dim Timer
       description: Timer that counts untill lights dim 
       selector:
-        target:
-          entity:
-            domain: timer
+        entity:
+          domain: timer
   
 trigger:
   - platform: state
