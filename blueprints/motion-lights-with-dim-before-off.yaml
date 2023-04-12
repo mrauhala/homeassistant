@@ -18,6 +18,20 @@ blueprint:
         target:
           entity:
             domain: light
+    off_timer:
+      name: Off Timer
+      description: Timer that counts for grace period 
+      selector:
+        target:
+          entity:
+            domain: timer
+    dim_timer:
+      name: Dim Timer
+      description: Timer that counts untill lights dim 
+      selector:
+        target:
+          entity:
+            domain: timer
   
 trigger:
   - platform: state
@@ -51,11 +65,11 @@ action:
             data: {}
             enabled: true
             target:
-              entity_id: timer.eteinen_ajastin_dim
+              entity_id: !input dim_timer
           - service: timer.cancel
             data: {}
             target:
-              entity_id: timer.eteinen_ajastin_off
+              entity_id: !input off_timer
       - conditions:
           - condition: trigger
             id: dim
@@ -67,7 +81,7 @@ action:
           - service: timer.start
             data: {}
             target:
-              entity_id: timer.eteinen_ajastin_off
+              entity_id: !input off_timer
       - conditions:
           - condition: trigger
             id: "off"
