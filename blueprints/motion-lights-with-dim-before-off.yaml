@@ -63,6 +63,14 @@ trigger:
     event_data:
       entity_id: !input off_timer
     id: "off"
+  - platform: state
+    entity_id:
+      - binary_sensor.toiletcontact_contact
+    from: "off"
+    to: "on"
+    id: dooropen
+    enabled: false
+
     
 action:
   - choose:
@@ -82,6 +90,26 @@ action:
             data: {}
             target:
               entity_id: !input off_timer
+          - choose:
+              - conditions:
+                  - condition: state
+                    entity_id: binary_sensor.toiletcontact_contact
+                    state: "off"
+                sequence:
+                  - service: switch.turn_off
+                    data: {}
+                    target:
+                      entity_id: switch.pikkuvessa_sensori_motion
+              - conditions:
+                  - condition: state
+                    entity_id: binary_sensor.toiletcontact_contact
+                    state: "on"
+                sequence:
+                  - service: switch.turn_on
+                    data: {}
+                    target:
+                      entity_id: switch.pikkuvessa_sensori_motion
+            enabled: false
       - conditions:
           - condition: trigger
             id: dim
@@ -109,7 +137,8 @@ action:
           - service: timer.start
             data: {}
             target:
-              entity_id: !input dim_timer
+              entity_id:
+                - !input dim_timer
           - service: timer.cancel
             data: {}
             target:
