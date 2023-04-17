@@ -44,7 +44,7 @@ blueprint:
 trigger:
   - platform: state
     entity_id:
-    - !input motion_sensor
+      - !input motion_sensor
     to: "on"
     id: "on"
   - platform: state
