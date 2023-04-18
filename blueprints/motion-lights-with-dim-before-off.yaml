@@ -85,11 +85,13 @@ action:
           - service: timer.cancel
             data: {}
             target:
-              entity_id: !input dim_timer
+              entity_id: 
+                - !input dim_timer
           - service: timer.cancel
             data: {}
             target:
-              entity_id: !input off_timer
+              entity_id:
+                - !input off_timer
           - choose:
               - conditions:
                   - condition: state
@@ -121,7 +123,8 @@ action:
           - service: timer.start
             data: {}
             target:
-              entity_id: !input off_timer
+              entity_id: 
+                - !input off_timer
       - conditions:
           - condition: trigger
             id: "off"
@@ -142,4 +145,5 @@ action:
           - service: timer.cancel
             data: {}
             target:
-              entity_id: !input off_timer
+              entity_id:
+                - !input off_timer
