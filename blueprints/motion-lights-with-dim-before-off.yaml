@@ -31,6 +31,16 @@ blueprint:
       selector:
         entity:
           domain: timer
+    on_level:
+      name: On Level
+      description: Use this brightness when lights are on.
+      default: 100
+      selector:
+        number:
+          max: 100
+          min: 1
+          unit_of_measurement: "%"
+          mode: slider
     dim_level:
       name: Dim Level
       description: Lights dim to this level to indicate soon to turning of lights.
@@ -73,7 +83,7 @@ action:
         sequence:
           - service: light.turn_on
             data:
-              brightness_pct: 100
+              brightness_pct: !input on_level
             target: !input target_light
           - service: timer.cancel
             data: {}
