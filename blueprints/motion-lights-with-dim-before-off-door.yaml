@@ -125,8 +125,7 @@ action:
                   - service: switch.turn_off
                     data: {}
                     target: 
-                      entity_id:
-                        - !input motion_switch
+                      entity_id: !input motion_switch
               - conditions:
                   - condition: state
                     entity_id: !input door_sensor
@@ -135,8 +134,7 @@ action:
                   - service: switch.turn_on
                     data: {}
                     target: 
-                      entity_id:
-                        - !input motion_switch
+                      entity_id: !input motion_switch
       - conditions:
           - condition: trigger
             id: dim
@@ -176,9 +174,8 @@ action:
           - condition: trigger
             id: dooropen
         sequence:
-           - service: switch.turn_on
-             data: {}
-             target: 
-              entity_id:
-                 - !input motion_switch
+          - service: switch.turn_on
+            data: {}
+            target: 
+              entity_id: !input motion_switch
 mode: single
