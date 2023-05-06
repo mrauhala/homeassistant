@@ -125,8 +125,7 @@ action:
                 sequence:
                   - service: switch.turn_off
                     data: {}
-                    target:
-                      entity_id: !input motion_switch
+                    target: !input motion_switch
               - conditions:
                   - condition: state
                     entity_id: !input door_sensor
