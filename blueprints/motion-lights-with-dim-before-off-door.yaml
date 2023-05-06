@@ -12,6 +12,13 @@ blueprint:
         entity:
           domain: binary_sensor
           device_class: motion
+    motion_switch:
+      name: Montion Sensor Switch
+      description: Switch Motion Sensor On/Off
+      selector:
+        entity:
+          domain: switch
+          device_class: motion
     door_sensor:
       name: Door Sensor
       description: This sensor tells if door is open or closed.
@@ -26,13 +33,6 @@ blueprint:
         target:
           entity:
             domain: light
-    motion_switch:
-      name: Montion Sensor Switch
-      description: Switch Motion Sensor On/Off
-      selector:
-        entity:
-          domain: switch
-          device_class: motion
     off_timer:
       name: Off Timer
       description: Time to keep the lights dimmed before turning off.
@@ -125,7 +125,9 @@ action:
                 sequence:
                   - service: switch.turn_off
                     data: {}
-                    target: !input motion_switch
+                    target: 
+                      entity_id:
+                        - !input motion_switch
               - conditions:
                   - condition: state
                     entity_id: !input door_sensor
@@ -133,7 +135,9 @@ action:
                 sequence:
                   - service: switch.turn_on
                     data: {}
-                    target: !input motion_switch
+                    target: 
+                      entity_id:
+                        - !input motion_switch
       - conditions:
           - condition: trigger
             id: dim
