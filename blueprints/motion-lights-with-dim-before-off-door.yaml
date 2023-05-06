@@ -176,7 +176,9 @@ action:
           - condition: trigger
             id: dooropen
         sequence:
-          - type: turn_on
-            entity_id: !input motion_switch
-            domain: switch
+           - service: switch.turn_on
+             data: {}
+             target: 
+              entity_id:
+                 - !input motion_switch
 mode: single
