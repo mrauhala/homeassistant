@@ -18,7 +18,6 @@ blueprint:
       selector:
         entity:
           domain: switch
-          device_class: motion
     door_sensor:
       name: Door Sensor
       description: This sensor tells if door is open or closed.
