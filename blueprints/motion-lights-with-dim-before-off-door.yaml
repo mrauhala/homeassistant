@@ -93,9 +93,7 @@ trigger:
     from: "off"
     to: "on"
     id: dooropen
-    enabled: false
 
-    
 action:
   - choose:
       - conditions:
