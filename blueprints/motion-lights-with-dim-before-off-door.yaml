@@ -1,0 +1,182 @@
+blueprint:
+  name: Bathroom Light With Dimming and Door Check
+  description: Turn a light on based on detected motion, dim lights before turning off. Turn motion sensor of if door is closed and motion detected.
+  domain: automation
+  source_url: https://github.com/mrauhala/homeassistant/blob/main/blueprints/motion-lights-with-dim-before-off-door.yaml
+  author: Mikko Rauhala
+  input:
+    motion_sensor:
+      name: Motion Sensor
+      description: This sensor will be synchronized with the light.
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class: motion
+    door_sensor:
+      name: Door Sensor
+      description: This sensor tells if door is open or closed.
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class: contact
+    target_light:
+      name: Lights
+      description: The lights to keep in sync.
+      selector:
+        target:
+          entity:
+            domain: light
+    motion_switch:
+      name: Montion Sensor Switch
+      description: Switch Motion Sensor On/Off
+      selector:
+        target:
+          entity:
+            domain: switch
+    off_timer:
+      name: Off Timer
+      description: Time to keep the lights dimmed before turning off.
+      selector:
+        entity:
+          domain: timer
+    on_timer:
+      name: On Timer
+      description: Time to keep the lights on after last motion has cleared.
+      selector:
+        entity:
+          domain: timer
+    on_level:
+      name: On Level
+      description: Use this brightness when lights are on.
+      default: 100
+      selector:
+        number:
+          max: 100
+          min: 1
+          unit_of_measurement: "%"
+          mode: slider
+    dim_level:
+      name: Dim Level
+      description: Lights dim to this level to indicate soon to turning of lights.
+      default: 50
+      selector:
+        number:
+          max: 100
+          min: 1
+          unit_of_measurement: "%"
+          mode: slider
+  
+trigger:
+  - platform: state
+    entity_id:
+      - !input motion_sensor
+    to: "on"
+    id: "on"
+  - platform: state
+    entity_id:
+      - !input motion_sensor
+    to: "off"
+    from: "on"
+    id: clear
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: !input on_timer
+    id: dim
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: !input off_timer
+    id: "off"
+  - platform: state
+    entity_id:
+      - !input door_sensor
+    from: "off"
+    to: "on"
+    id: dooropen
+    enabled: false
+
+    
+action:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: "on"
+        sequence:
+          - service: light.turn_on
+            data:
+              brightness_pct: !input on_level
+            target: !input target_light
+          - service: timer.cancel
+            data: {}
+            target:
+              entity_id: 
+                - !input on_timer
+          - service: timer.cancel
+            data: {}
+            target:
+              entity_id:
+                - !input off_timer
+          - choose:
+              - conditions:
+                  - condition: state
+                    entity_id: !input door_sensor
+                    state: "off"
+                sequence:
+                  - service: switch.turn_off
+                    data: {}
+                    target:
+                      entity_id: !input motion_switch
+              - conditions:
+                  - condition: state
+                    entity_id: !input door_sensor
+                    state: "on"
+                sequence:
+                  - service: switch.turn_on
+                    data: {}
+                    target:
+                      entity_id: !input motion_switch
+            enabled: false
+      - conditions:
+          - condition: trigger
+            id: dim
+        sequence:
+          - service: light.turn_on
+            data:
+              brightness_pct: !input dim_level
+            target: !input target_light
+          - service: timer.start
+            data: {}
+            target:
+              entity_id: 
+                - !input off_timer
+      - conditions:
+          - condition: trigger
+            id: "off"
+        sequence:
+          - service: light.turn_off
+            data:
+              transition: 10
+            target: !input target_light
+      - conditions:
+          - condition: trigger
+            id: clear
+        sequence:
+          - service: timer.start
+            data: {}
+            target:
+              entity_id:
+                - !input on_timer
+          - service: timer.cancel
+            data: {}
+            target:
+              entity_id:
+                - !input off_timer
+      - conditions:
+          - condition: trigger
+            id: dooropen
+        sequence:
+          - type: turn_on
+            entity_id: !input motion_switch
+            domain: switch
+mode: single
