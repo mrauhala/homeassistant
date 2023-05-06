@@ -133,8 +133,7 @@ action:
                 sequence:
                   - service: switch.turn_on
                     data: {}
-                    target:
-                      entity_id: !input motion_switch
+                    target: !input motion_switch
             enabled: false
       - conditions:
           - condition: trigger
