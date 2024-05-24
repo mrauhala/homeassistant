@@ -1,0 +1,34 @@
+alias: Lämpötilavaroitus
+description: ""
+trigger:
+  - platform: numeric_state
+    entity_id:
+      - sensor.kylmatila_jaakaappisensori_temperature
+    above: 6
+    for:
+      minutes: 10
+  - platform: numeric_state
+    entity_id:
+      - sensor.kylmatila_pakastinsensori_temperature
+      - sensor.kylmatila_pakastinsensori_oikea_lampoltila
+    above: -12
+    for:
+      minutes: 10
+  - platform: numeric_state
+    entity_id:
+      - sensor.laitetila_lampomittari_temperature
+    above: 34
+    for:
+      minutes: 10
+action:
+  - service: notify.mobile_app_iphone_mikko
+    data:
+      title: "{{ area_name(trigger.entity_id) }}"
+      message: >-
+        {{ state_attr(trigger.entity_id, 'friendly_name') }}  on ollut {{
+        trigger.for }} minuutia yli {{ trigger.above }}°C. Lämpötila nyt on {{
+        states(trigger.entity_id) }} | round(1) °C.
+      tag: "{{ trigger.entity_id }}"
+      push:
+        interruption-level: time-sensitive
+mode: single
