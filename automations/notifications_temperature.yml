@@ -28,7 +28,8 @@ action:
         {{ state_attr(trigger.entity_id, 'friendly_name') }}  on ollut {{
         trigger.for }} minuutia yli {{ trigger.above }}°C. Lämpötila nyt on {{
         states(trigger.entity_id) }} | round(1) °C.
-      tag: "{{ trigger.entity_id }}"
-      push:
-        interruption-level: time-sensitive
+      data:
+        tag: "{{ trigger.entity_id }}"
+        push:
+          interruption-level: time-sensitive
 mode: single
