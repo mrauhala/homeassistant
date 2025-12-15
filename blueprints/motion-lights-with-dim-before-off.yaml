@@ -6,12 +6,13 @@ blueprint:
   author: Mikko Rauhala
   input:
     motion_sensor:
-      name: Motion Sensor
-      description: This sensor will be synchronized with the light.
+      name: Motion Sensor(s)
+      description: The motion sensor(s) that will be synchronized with the light.
       selector:
-        entity:
-          domain: binary_sensor
-          device_class: motion
+        target:
+          entity:
+            domain: binary_sensor
+            device_class: motion
     target_light:
       name: Lights
       description: The lights to keep in sync.
@@ -54,13 +55,11 @@ blueprint:
   
 trigger:
   - platform: state
-    entity_id:
-      - !input motion_sensor
+    entity_id: !input motion_sensor
     to: "on"
     id: "on"
   - platform: state
-    entity_id:
-      - !input motion_sensor
+    entity_id: !input motion_sensor
     to: "off"
     from: "on"
     id: clear
