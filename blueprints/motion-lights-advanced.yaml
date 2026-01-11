@@ -118,7 +118,7 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ conditional_entity != none and conditional_entity != '' }}"
+                    value_template: "{{ conditional_entity is defined and conditional_entity is not none and conditional_entity != '' and conditional_entity != {} }}"
                   - condition: state
                     entity_id: !input conditional_entity
                     state: "on"
